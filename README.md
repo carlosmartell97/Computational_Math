@@ -1,7 +1,10 @@
 # Computational Math
 ## About
 Files for a Computational Math course.
-
+<br/>
+<br/>
+<br/>
+<br/>
 # CYK.cpp
 This is my implementation of the CYK algorithm, an algorithm for finding out wether a word belongs to a certain grammar or not. This input grammar needs to be in Chomsky Normal Form. For best results, compile this program with the c++11 standard or above.
 
@@ -59,3 +62,16 @@ A 0 0 S D S
 aabbab belongs to L(G)!
 derivation: S->SS->ACS->ACAB->ASBAB->AABBAB->*aabbab
 ```
+<br/>
+<br/>
+<br/>
+<br/>
+
+# busy_beaver.cpp
+.
+
+## Usage
+.
+
+## Results
+.
