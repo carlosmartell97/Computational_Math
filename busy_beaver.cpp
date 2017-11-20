@@ -13,7 +13,60 @@ public:
   }
 };
 
+vector<long> conversionValues(24);
+void initializeConversionValues(){
+  conversionValues[23]=1;
+  conversionValues[22]=conversionValues[23]*5;  conversionValues[21]=conversionValues[22]*2;  conversionValues[20]=conversionValues[21]*2;
+  conversionValues[19]=conversionValues[20]*5;  conversionValues[18]=conversionValues[19]*2;  conversionValues[17]=conversionValues[18]*2;
+  conversionValues[16]=conversionValues[17]*5;  conversionValues[15]=conversionValues[16]*2;  conversionValues[14]=conversionValues[15]*2;
+  conversionValues[13]=conversionValues[14]*5;  conversionValues[12]=conversionValues[13]*2;  conversionValues[11]=conversionValues[12]*2;
+  conversionValues[10]=conversionValues[11]*5;  conversionValues[9]=conversionValues[10]*2;  conversionValues[8]=conversionValues[9]*2;
+  conversionValues[7]=conversionValues[8]*5;  conversionValues[6]=conversionValues[7]*2;  conversionValues[5]=conversionValues[6]*2;
+  conversionValues[4]=conversionValues[5]*5;  conversionValues[3]=conversionValues[4]*2;  conversionValues[2]=conversionValues[3]*2;
+  conversionValues[1]=conversionValues[2]*5;  conversionValues[0]=conversionValues[1]*2;
+}
+
+vector<short> convertToInstructions(long machineNumber){
+  short pos = 0;
+  vector<short> result(24, 0);
+  while(machineNumber>0){
+    if((pos+1)%3==0){
+      bool found = 0;
+      result[pos] = 0;
+      // printf("r[%d]->%d\n", pos, 0);
+      for(int i=4; i>=0; i--){
+        if(!found && machineNumber>=conversionValues[pos]*i){
+          machineNumber-=conversionValues[pos]*i;
+          result[pos] = i;
+          // printf("r[%d]->%d\n", pos, i);
+          found = 1;
+        }
+      }
+    } else {
+      if(machineNumber>=conversionValues[pos]){
+        machineNumber-=conversionValues[pos];
+        result[pos] = 1;
+        // printf("r[%d]->%d\n", pos, 1);
+      } else {
+        result[pos] = 0;
+        // printf("r[%d]->%d\n", pos, 0);
+      }
+    }
+    pos++;
+  }
+  return result;
+}
+
+void printValue(vector<short> converted){
+  long result = 0;
+  for(int i=0; i<converted.size(); i++){
+    result+=converted[i]*conversionValues[i];
+  }
+  printf("\nvalue:%ld\n", result);
+}
+
 int main(){
+  initializeConversionValues();
   int numCards = 5;                                             // states
   vector<Card*> cards(numCards, new Card(-1,-1,-1, -1,-1,-1));  // 4 cards + the final card (state), initially all -1
 
@@ -66,6 +119,17 @@ int main(){
   //   delete cards[card];
   // }
 
-  printf("--DONE--\n");
+  for(int i=0; i<conversionValues.size(); i++){
+    // printf("cv[%d]:%li\n", i, conversionValues[i]);
+  }
+  long test = 22563805986;
+  // long test = 220;
+  vector<short> result = convertToInstructions(test);
+  printf("\n%ld -> ", test);
+  for(int i=0; i<result.size(); i++){
+    printf("%i", result[i]);
+  }
+  // printValue(result);
+  printf("\n--DONE--\n");
   return 0;
 }
