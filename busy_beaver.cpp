@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class Card{
@@ -70,7 +71,8 @@ int main(){
   int numCards = 5;                                             // states
   vector<Card*> cards(numCards, new Card(-1,-1,-1, -1,-1,-1));  // 4 cards + the final card (state), initially all -1
 
-  vector<short> tape(5000,0);           // pseudo infinite tape filled with zeroes
+  long tapeSize = 10000000;
+  vector<short> tape(tapeSize,0);           // pseudo infinite tape filled with zeroes
   cards[1] = new Card(1,1,2, 1,0,2);
   cards[2] = new Card(1,0,1, 0,0,3);
   cards[3] = new Card(1,1,0, 1,0,4);
@@ -87,34 +89,59 @@ int main(){
     cards[atCard]->instructions[1][2]);
     printf("\n\n");
   }
-
-  int tapePosition = 2500;              // initial position is in the middle of the tape
-  int currentCard = 1;                  // initial card
   short read;
-  int steps = 0;
-  while(true){
-    steps++;
-    read  = tape[tapePosition];
-    tape[tapePosition] = cards[currentCard]->instructions[read][0];
-    if(cards[currentCard]->instructions[read][1]==1){
-      tapePosition++;                   // move right
-    } else {
-      tapePosition--;                   // move left
+  ofstream outputFile("busy_beaver_results.txt");
+  long firstMachine = 1;
+  long lastMachine = 10;
+  for(long machineNumber=firstMachine; machineNumber<=lastMachine; machineNumber++){
+    int tapePosition = tapeSize/2;              // initial position is in the middle of the tape
+    int currentCard = 1;                  // initial card
+    int steps = 1;
+    tape.assign(tapeSize,0);
+    vector<short> instructions = convertToInstructions(machineNumber);
+    if(instructions[2]!=0 && instructions[5]!=0 && instructions[8]!=0 && instructions[11]!=0
+    && instructions[14]!=0 && instructions[17]!=0 && instructions[20]!=0 && instructions[23]!=0){
+      // there is no transition to the halting state
+      outputFile <<"machine#:"<<machineNumber<<"  will never halt"<<endl;
+      continue;
     }
-    currentCard = cards[currentCard]->instructions[read][2];
-    if(tapePosition<0 || tapePosition>=5000){
-      printf("\ntape not big enough, position=%d\n", tapePosition);
-    }
-    if(currentCard==0){
-      printf("\nMACHINE HALT\n");
-      int ones = 0;
-      for(int i=0; i<tape.size(); i++){
-        if(tape[i]==1) ones++;
+    cards[1] = new Card(instructions[0],instructions[1],instructions[2], instructions[3],instructions[4],instructions[5]);
+    cards[2] = new Card(instructions[6],instructions[7],instructions[8], instructions[9],instructions[10],instructions[11]);
+    cards[3] = new Card(instructions[12],instructions[13],instructions[14], instructions[15],instructions[16],instructions[17]);
+    cards[4] = new Card(instructions[18],instructions[19],instructions[20], instructions[21],instructions[22],instructions[23]);
+    while(true){
+      read  = tape[tapePosition];
+      tape[tapePosition] = cards[currentCard]->instructions[read][0];
+      if(cards[currentCard]->instructions[read][1]==1){
+        tapePosition++;                   // move right
+      } else {
+        tapePosition--;                   // move left
       }
-      printf("ones:%d  steps:%d\n", ones, steps);
-      break;
+      currentCard = cards[currentCard]->instructions[read][2];
+      if(tapePosition<0 || tapePosition>=tapeSize){
+        printf("\nmachine#:%ld  tape not big enough, position=%d\n", machineNumber, tapePosition);
+        outputFile <<"machine#:"<<machineNumber<<"  not big engough, position="<<tapePosition<<endl;
+        break;
+      }
+      if(currentCard==0){
+        printf("\nMACHINE %ld HALT\n", machineNumber);
+        int ones = 0;
+        for(int i=0; i<tape.size(); i++){
+          if(tape[i]==1) ones++;
+        }
+        printf("ones:%d  steps:%d\n", ones, steps);
+        outputFile <<"machine#:"<<machineNumber<<"  instructions:";
+        for(int instruction=0; instruction<instructions.size(); instruction++){
+          outputFile <<instructions[instruction];
+          if((instruction+1)%6==0) outputFile<<",";
+          if((instruction+4)%6==0) outputFile<<"'";
+        } outputFile <<"  ones:"<<ones<<"  steps:"<<steps<<endl;
+        break;
+      }
+      steps++;
     }
   }
+  outputFile.close();
   // for(int card=0; card<numCards; card++){
   //   delete cards[card];
   // }
