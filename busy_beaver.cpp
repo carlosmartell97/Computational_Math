@@ -91,8 +91,10 @@ int main(){
   }
   short read;
   ofstream outputFile("busy_beaver_results.txt");
-  long firstMachine = 1;
-  long lastMachine = 10;
+  long firstMachine = 8943228657;
+  long lastMachine = 8943228657;
+  int maxOnes = 0;
+  vector<long> maxWinners;
   for(long machineNumber=firstMachine; machineNumber<=lastMachine; machineNumber++){
     int tapePosition = tapeSize/2;              // initial position is in the middle of the tape
     int currentCard = 1;                  // initial card
@@ -105,10 +107,10 @@ int main(){
       outputFile <<"machine#:"<<machineNumber<<"  will never halt"<<endl;
       continue;
     }
-    cards[1] = new Card(instructions[0],instructions[1],instructions[2], instructions[3],instructions[4],instructions[5]);
-    cards[2] = new Card(instructions[6],instructions[7],instructions[8], instructions[9],instructions[10],instructions[11]);
-    cards[3] = new Card(instructions[12],instructions[13],instructions[14], instructions[15],instructions[16],instructions[17]);
-    cards[4] = new Card(instructions[18],instructions[19],instructions[20], instructions[21],instructions[22],instructions[23]);
+    cards[1] = new Card(instructions[21],instructions[22],instructions[23], instructions[18],instructions[19],instructions[20]);
+    cards[2] = new Card(instructions[15],instructions[16],instructions[17], instructions[12],instructions[13],instructions[14]);
+    cards[3] = new Card(instructions[9],instructions[10],instructions[11], instructions[6],instructions[7],instructions[8]);
+    cards[4] = new Card(instructions[3],instructions[4],instructions[5], instructions[0],instructions[1],instructions[2]);
     while(true){
       read  = tape[tapePosition];
       tape[tapePosition] = cards[currentCard]->instructions[read][0];
@@ -119,28 +121,69 @@ int main(){
       }
       currentCard = cards[currentCard]->instructions[read][2];
       if(tapePosition<0 || tapePosition>=tapeSize){
-        printf("\nmachine#:%ld  tape not big enough, position=%d\n", machineNumber, tapePosition);
-        outputFile <<"machine#:"<<machineNumber<<"  not big engough, position="<<tapePosition<<endl;
+        printf("\nmachine#:%ld  ", machineNumber);
+        outputFile <<"machine#:"<<machineNumber<<"  instructions:"<<flush;
+        for(int instruction=0; instruction<instructions.size(); instruction++){
+          outputFile <<instructions[instruction]<<flush;
+          printf("%d", instructions[instruction]);
+          if((instruction+1)%6==0){
+            outputFile<<","<<flush;
+            printf(",");
+          }
+          if((instruction+4)%6==0){
+            outputFile<<"'"<<flush;
+            printf("'");
+          }
+        }
+        outputFile<<"  not big engough, position="<<tapePosition<<endl;
+        printf("  tape not big enough, position=%d\n", tapePosition);
+        outputFile<<"maxOnes:"<<maxOnes<<endl<<endl;
+        printf("maxOnes:%d\n", maxOnes);
         break;
       }
       if(currentCard==0){
-        printf("\nMACHINE %ld HALT\n", machineNumber);
+        printf("\nmachine#%ld  ", machineNumber);
         int ones = 0;
         for(int i=0; i<tape.size(); i++){
           if(tape[i]==1) ones++;
         }
-        printf("ones:%d  steps:%d\n", ones, steps);
-        outputFile <<"machine#:"<<machineNumber<<"  instructions:";
+        outputFile <<"machine#:"<<machineNumber<<"  instructions:"<<flush;
         for(int instruction=0; instruction<instructions.size(); instruction++){
-          outputFile <<instructions[instruction];
-          if((instruction+1)%6==0) outputFile<<",";
-          if((instruction+4)%6==0) outputFile<<"'";
-        } outputFile <<"  ones:"<<ones<<"  steps:"<<steps<<endl;
+          outputFile <<instructions[instruction]<<flush;
+          printf("%d", instructions[instruction]);
+          if((instruction+1)%6==0){
+            printf(",");
+            outputFile<<","<<flush;
+          }
+          if((instruction+4)%6==0){
+            outputFile<<"'"<<flush;
+            printf("'");
+          }
+        }
+        if(ones>maxOnes){
+          maxOnes = ones;
+          maxWinners.assign(0,0);
+          maxWinners.push_back(machineNumber);
+        } else if(ones == maxOnes){
+          maxWinners.push_back(machineNumber);
+        }
+        outputFile <<"  STEPS "<<steps<<"  ONES "<<ones<<endl;
+        printf("  STEPS %d  ONES %d\n", steps, ones);
+        outputFile<<"maxOnes:"<<maxOnes<<endl<<endl;
+        printf("maxOnes:%d\n", maxOnes);
         break;
       }
       steps++;
     }
   }
+  printf("\n\nWINNERS\nmost ones in tape:%d  machines:", maxOnes);
+  outputFile <<endl<<"WINNERS"<<endl<<"most ones in tape:"<<maxOnes<<"  machines:"<<flush;
+  for(int i=0; i<maxWinners.size(); i++){
+    printf("%ld,", maxWinners[i]);
+    outputFile <<maxWinners[i]<<","<<flush;
+  }
+  printf("\n");
+  outputFile << endl;
   outputFile.close();
   // for(int card=0; card<numCards; card++){
   //   delete cards[card];
@@ -149,14 +192,20 @@ int main(){
   for(int i=0; i<conversionValues.size(); i++){
     // printf("cv[%d]:%li\n", i, conversionValues[i]);
   }
-  long test = 22563805986;
-  // long test = 220;
+  long test = 8943228657;
+  // long test = 25599999999;
   vector<short> result = convertToInstructions(test);
   printf("\n%ld -> ", test);
   for(int i=0; i<result.size(); i++){
     printf("%i", result[i]);
   }
-  // printValue(result);
+  vector<short> thirteen(24);
+  thirteen[0]=0;  thirteen[1]=1;  thirteen[2]=1;      thirteen[3]=1;  thirteen[4]=1;  thirteen[5]=4;
+  thirteen[6]=1;  thirteen[7]=0;  thirteen[8]=4;      thirteen[9]=1;  thirteen[10]=1; thirteen[11]=0;
+  thirteen[12]=0; thirteen[13]=0; thirteen[14]=3;     thirteen[15]=1; thirteen[16]=0; thirteen[17]=1;
+  thirteen[18]=1; thirteen[19]=0; thirteen[20]=2;     thirteen[21]=1; thirteen[22]=1; thirteen[23]=2;
+
+  printValue(thirteen);
   printf("\n--DONE--\n");
   return 0;
 }
