@@ -112,30 +112,28 @@ Out of all these possible machines, there's at least one that performs quite wel
 __________________________________
 |             CARD 1             |
 |________________________________|
-|   0            0     1    1    |
-|   1            1     1    4    |
+|   0            1     1    2    |
+|   1            1     0    2    |
 |________________________________|
-
 __________________________________
 |             CARD 2             |
 |________________________________|
-|   0            1     0    4    |
-|   1            1     1    0    |
+|   0            1     0    1    |
+|   1            0     0    3    |
 |________________________________|
-
 __________________________________
 |             CARD 3             |
 |________________________________|
-|   0            0     0    3    |
-|   1            1     0    1    |
+|   0            1     1    0    |
+|   1            1     0    4    |
 |________________________________|
-
 __________________________________
 |             CARD 4             |
 |________________________________|
-|   0            1     0    2    |
-|   1            1     1    2    |
+|   0            1     1    4    |
+|   1            0     1    1    |
 |________________________________|
+
 ```
 How can my universal Turing machine test for all these different configurations? Well, for that I first convert from integer numbers to turing machine instructions (cards). This way, there is a unique machine configuration for each integer in the range of possible machines (0-24,599,999,999). These configurations are stored in a 24-block vector, so that the card configuration for the cards above (machine #8943228657) is
 ```
