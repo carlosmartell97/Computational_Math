@@ -14,7 +14,7 @@ public:
   }
 };
 
-vector<long> conversionValues(24);
+vector<long long int> conversionValues(24);
 void initializeConversionValues(){
   conversionValues[23]=1;
   conversionValues[22]=conversionValues[23]*5;  conversionValues[21]=conversionValues[22]*2;  conversionValues[20]=conversionValues[21]*2;
@@ -27,7 +27,7 @@ void initializeConversionValues(){
   conversionValues[1]=conversionValues[2]*5;  conversionValues[0]=conversionValues[1]*2;
 }
 
-vector<short> convertToInstructions(long machineNumber){
+vector<short> convertToInstructions(long long int machineNumber){
   short pos = 0;
   vector<short> result(24, 0);
   while(machineNumber>0){
@@ -59,11 +59,11 @@ vector<short> convertToInstructions(long machineNumber){
 }
 
 void printValue(vector<short> converted){
-  long result = 0;
+  long long int result = 0;
   for(int i=0; i<converted.size(); i++){
     result+=converted[i]*conversionValues[i];
   }
-  printf("\nvalue:%ld\n", result);
+  printf("\nvalue:%lld\n", result);
 }
 
 int main(){
@@ -91,12 +91,13 @@ int main(){
     printf("\n\n");
   }
   short read;
-  ofstream outputFile("busy_beaver_results.txt");
-  long firstMachine = 8943228657;
-  long lastMachine = 8943228657;
+  ofstream outputFile("results_busy_beaver.txt");
+  long long int firstMachine = 8954016835;
+  long long int lastMachine =  8955228657;
   int maxOnes = 0;
-  vector<long> maxWinners;
-  for(long machineNumber=firstMachine; machineNumber<=lastMachine; machineNumber++){
+  vector<long long int> maxWinners;
+  for(long long int machineNumber=firstMachine;
+      machineNumber<=lastMachine; machineNumber++){
     int tapePosition = tapeSize/2;              // initial position is in the middle of the tape
     int currentCard = 1;                  // initial card
     int steps = 1;
@@ -122,7 +123,7 @@ int main(){
       }
       currentCard = cards[currentCard]->instructions[read][2];
       if(tapePosition<0 || tapePosition>=tapeSize){
-        printf("\nmachine#%ld  ", machineNumber);
+        printf("\nmachine#%lld  ", machineNumber);
         outputFile <<"machine#"<<machineNumber<<"  instructions:"<<flush;
         for(int instruction=0; instruction<instructions.size(); instruction++){
           outputFile <<instructions[instruction]<<flush;
@@ -143,7 +144,7 @@ int main(){
         break;
       }
       if(steps>maxSteps){
-        printf("\nmachine#%ld  ", machineNumber);
+        printf("\nmachine#%lld  ", machineNumber);
         outputFile <<"machine#"<<machineNumber<<"  instructions:"<<flush;
         for(int instruction=0; instruction<instructions.size(); instruction++){
           outputFile <<instructions[instruction]<<flush;
@@ -164,7 +165,7 @@ int main(){
         break;
       }
       if(currentCard==0){
-        printf("\nmachine#%ld  ", machineNumber);
+        printf("\nmachine#%lld  ", machineNumber);
         int ones = 0;
         for(int i=0; i<tape.size(); i++){
           if(tape[i]==1) ones++;
@@ -194,7 +195,7 @@ int main(){
         outputFile<<"maxOnes:"<<maxOnes<<"  machines:"<<flush;
         printf("maxOnes:%d  machines:", maxOnes);
         for(int i=0; i<maxWinners.size(); i++){
-          printf("%ld,", maxWinners[i]);
+          printf("%lld,", maxWinners[i]);
           outputFile <<maxWinners[i]<<","<<flush;
         }
         outputFile <<endl<<endl;
@@ -207,7 +208,7 @@ int main(){
   printf("\n\nWINNERS\nmost ones in tape:%d  machines:", maxOnes);
   outputFile <<endl<<"WINNERS"<<endl<<"most ones in tape:"<<maxOnes<<"  machines:"<<flush;
   for(int i=0; i<maxWinners.size(); i++){
-    printf("%ld,", maxWinners[i]);
+    printf("%lld,", maxWinners[i]);
     outputFile <<maxWinners[i]<<","<<flush;
   }
   printf("\n");
@@ -220,10 +221,10 @@ int main(){
   for(int i=0; i<conversionValues.size(); i++){
     // printf("cv[%d]:%li\n", i, conversionValues[i]);
   }
-  long test = 8943228657;
-  // long test = 25599999999;
+  long long int test = 8943228657;
+  // long long int test = 25599999999;
   vector<short> result = convertToInstructions(test);
-  printf("\n%ld -> ", test);
+  printf("\n%lld -> ", test);
   for(int i=0; i<result.size(); i++){
     printf("%i", result[i]);
   }
